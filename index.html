@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Florida B.E.S.T. ELA.6.R.1.1 - Character Interaction & Plot Lab</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #334155;
+      --accent-blue: #0284c7;
+      --accent-teal: #0d9488;
+      --accent-amber: #d97706;
+      --accent-emerald: #059669;
+      --accent-rose: #e11d48;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .header-banner {
+      background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
+      padding: 24px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-badge {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .header-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-top: 6px;
+    }
+
+    .header-subtitle {
+      font-size: 1rem;
+      color: #e0f2fe;
+    }
+
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .layout-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .card-title .icon {
+      font-size: 1.4rem;
+    }
+
+    /* Canvas Player Styling */
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      background: #000000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 280px;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #090d16;
+      padding: 12px 16px;
+    }
+
+    .btn {
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      height: 8px;
+      background: #334155;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+      border-radius: 4px;
+      transition: width 0.1s linear;
+    }
+
+    .time-display {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .chapter-pills {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .chapter-pill {
+      background: var(--bg-card-hover);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .chapter-pill:hover, .chapter-pill.active {
+      background: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
+
+    /* Reading Passage Box */
+    .passage-box {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 4px solid var(--accent-amber);
+      max-height: 400px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #cbd5e1;
+    }
+
+    .passage-box p {
+      margin-bottom: 14px;
+    }
+
+    .highlight-interaction {
+      background: rgba(217, 119, 6, 0.2);
+      border-bottom: 2px solid var(--accent-amber);
+      color: #fef3c7;
+      padding: 2px 4px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .highlight-interaction:hover {
+      background: rgba(217, 119, 6, 0.4);
+    }
+
+    .character-tag {
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .tag-maya {
+      background: rgba(2, 132, 199, 0.3);
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+    }
+
+    .tag-ethan {
+      background: rgba(13, 148, 136, 0.3);
+      color: #2dd4bf;
+      border: 1px solid #0d9488;
+    }
+
+    /* Matrix / Organizer */
+    .matrix-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .matrix-row {
+      display: grid;
+      grid-template-columns: 1fr 20px 1fr 20px 1fr;
+      align-items: center;
+      background: var(--bg-card-hover);
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .matrix-arrow {
+      text-align: center;
+      color: var(--accent-amber);
+      font-weight: bold;
+    }
+
+    .matrix-box {
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .matrix-box h5 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    /* Quiz Styling */
+    .quiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      background: var(--bg-card-hover);
+      padding: 12px 16px;
+      border-radius: 10px;
+    }
+
+    .score-badge {
+      background: var(--accent-emerald);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .question-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .question-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px 16px;
+      border-radius: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-blue);
+    }
+
+    .option-btn.correct {
+      background: rgba(5, 150, 105, 0.2) !important;
+      border-color: var(--accent-emerald) !important;
+      color: #6ee7b7 !important;
+    }
+
+    .option-btn.incorrect {
+      background: rgba(225, 29, 72, 0.2) !important;
+      border-color: var(--accent-rose) !important;
+      color: #fca5a5 !important;
+    }
+
+    .rationale-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .rationale-box.visible {
+      display: block;
+    }
+
+    .rationale-box.correct {
+      background: rgba(5, 150, 105, 0.15);
+      border: 1px solid var(--accent-emerald);
+      color: #a7f3d0;
+    }
+
+    .rationale-box.incorrect {
+      background: rgba(225, 29, 72, 0.15);
+      border: 1px solid var(--accent-rose);
+      color: #fecdd3;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header-banner">
+    <div>
+      <span class="header-badge">Florida B.E.S.T. Standard ELA.6.R.1.1</span>
+      <h1 class="header-title">Character Interaction & Plot Development Lab</h1>
+      <p class="header-subtitle">Analyze how dialogue, character choices, and conflicting perspectives drive plot progression</p>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 0.85rem; color: #e0f2fe;">Target Benchmark</div>
+      <div style="font-weight: 700; font-size: 1.1rem; color: #ffffff;">ELA.6.R.1.1 Literary Analysis</div>
+    </div>
+  </header>
+
+  <div class="layout-grid">
+    
+    <!-- LEFT COLUMN: Canvas Animation & Story Passage -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      
+      <!-- Canvas Simulation Player -->
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🎬</span>
+          <span>Interactive Scene Simulator: "The Echo in the Canyon"</span>
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="storyCanvas" width="600" height="280"></canvas>
+        </div>
+
+        <div class="player-controls">
+          <button class="btn" id="playBtn" onclick="togglePlay()">Play Scene</button>
+          <div class="progress-bar-wrap" onclick="seekVideo(event)">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="time-display" id="timeDisplay">0:00 / 1:20</div>
+        </div>
+
+        <div class="chapter-pills">
+          <span class="chapter-pill active" onclick="jumpToTime(0)">0:00 - Exposition (Opposing Goals)</span>
+          <span class="chapter-pill" onclick="jumpToTime(20)">0:20 - Inciting Incident (The Storm)</span>
+          <span class="chapter-pill" onclick="jumpToTime(40)">0:40 - Climax (The Broken Rope)</span>
+          <span class="chapter-pill" onclick="jumpToTime(60)">1:00 - Resolution (Changed Dynamic)</span>
+        </div>
+      </div>
+
+      <!-- Literary Passage Reader -->
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">📖</span>
+          <span>Literary Text: "The Echo in the Canyon"</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+          Click on any highlighted text to see how that specific interaction moves the plot forward.
+        </p>
+
+        <div class="passage-box">
+          <p>
+            <strong>Paragraph 1:</strong> The sun dipped below the jagged rim of Echo Canyon. <span class="character-tag tag-maya">Maya</span> tightened her backpack straps, her eyes scanning the dark clouds gathering along the ridge. "We need to turn back now, Ethan," she said, her voice steady but firm. "The weather service warned of flash floods."
+          </p>
+          <p>
+            <strong>Paragraph 2:</strong> <span class="character-tag tag-ethan">Ethan</span> scoffed, adjusting his digital camera tripod. "We’re twenty minutes from the summit view, Maya! If I don't get these photos today, I miss the contest deadline." <span class="highlight-interaction" onclick="explainInteraction(1)">Ethan's refusal to heed Maya's warning forces both hikers to stay in the canyon just as thunder rumbles overhead.</span>
+          </p>
+          <p>
+            <strong>Paragraph 3:</strong> Within minutes, rain lashed the sandstone walls. Water began surging down the dry gulch, blocking the path back. Maya pointed toward an elevated ledge across a narrow gap. "We have to leap to that high ground before the creek rises any higher!"
+          </p>
+          <p>
+            <strong>Paragraph 4:</strong> Ethan froze, staring at the churning mud below. "I can't make that jump. My pack is too heavy, and I—I'm terrified of heights." <span class="highlight-interaction" onclick="explainInteraction(2)">Ethan's admission of fear and inability to jump creates the story's main crisis (climax).</span>
+          </p>
+          <p>
+            <strong>Paragraph 5:</strong> Maya didn't argue or scold him. Instead, she unclipped her rope and threw one end across a sturdy rock pillar on the ledge, anchoring herself. "Drop the tripod, Ethan! Give me your hand—we do this together!"
+          </p>
+          <p>
+            <strong>Paragraph 6:</strong> <span class="highlight-interaction" onclick="explainInteraction(3)">Trusting Maya's quick decision and firm leadership, Ethan lets go of his heavy camera gear and leaps across, allowing Maya to pull him safely onto the ledge.</span>
+          </p>
+          <p>
+            <strong>Paragraph 7:</strong> Crouched safely under the rock overhang as the canyon floor flooded below, Ethan looked at Maya with newfound respect. "I almost cost us everything for a photo," he admitted softly. Maya smiled, offering him half her dry jacket. "We made it because we listened to each other when it mattered most."
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Graphic Organizer & Practice Quiz -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+
+      <!-- Character-Plot Cause & Effect Matrix -->
+      <div class="card">
+        <div class="card-title">
+          <span class="icon">🧩</span>
+          <span>Character Interaction Cause-&-Effect Engine</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+          How character choices push the story from one plot stage to the next:
+        </p>
+
+        <div class="matrix-container">
+          
+          <div class="matrix-row">
+            <div class="matrix-box">
+              <h5>Character Interaction</h5>
+              <p>Maya warns about storm; Ethan dismisses her to take photos.</p>
+            </div>
+            <div class="matrix-arrow">➔</div>
+            <div class="matrix-box">
+              <h5>Plot Impact</h5>
+              <p>Creates <strong>Rising Action</strong> (trapped in canyon during flood).</p>
+            </div>
+            <div class="matrix-arrow">➔</div>
+            <div class="matrix-box">
+              <h5>Story Result</h5>
+              <p>Escalates danger and heightens conflict.</p>
+            </div>
+          </div>
+
+          <div class="matrix-row">
+            <div class="matrix-box">
+              <h5>Character Interaction</h5>
+              <p>Ethan admits fear; Maya adapts quickly and offers rope anchor.</p>
+            </div>
+            <div class="matrix-arrow">➔</div>
+            <div class="matrix-box">
+              <h5>Plot Impact</h5>
+              <p>Reaches <strong>Climax</strong> (high-stakes rescue leap across gap).</p>
+            </div>
+            <div class="matrix-arrow">➔</div>
+            <div class="matrix-box">
+              <h5>Story Result</h5>
+              <p>Forces resolution of physical and interpersonal conflict.</p>
+            </div>
+          </div>
+
+          <div class="matrix-row">
+            <div class="matrix-box">
+              <h5>Character Interaction</h5>
+              <p>Ethan admits fault; Maya shares jacket and validates trust.</p>
+            </div>
+            <div class="matrix-arrow">➔</div>
+            <div class="matrix-box">
+              <h5>Plot Impact</h5>
+              <p>Leads to <strong>Resolution</strong> (mutual respect and safety on ledge).</p>
+            </div>
+            <div class="matrix-arrow">➔</div>
+            <div class="matrix-box">
+              <h5>Story Result</h5>
+              <p>Transforms character dynamic permanently.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- State Assessment Practice Questions -->
+      <div class="card">
+        <div class="quiz-nav">
+          <span style="font-weight: 700; font-size: 1rem;">Florida B.E.S.T. Assessment Practice</span>
+          <span class="score-badge" id="scoreDisplay">Score: 0 / 8</span>
+        </div>
+
+        <div id="quizContainer">
+          <!-- Question cards injected by JavaScript -->
+        </div>
+
+        <div class="pagination">
+          <button class="btn btn-secondary" id="prevBtn" onclick="navigateQuiz(-1)" disabled>Previous</button>
+          <span id="quizProgress" style="align-self: center; font-size: 0.85rem; color: var(--text-muted);">Question 1 of 8</span>
+          <button class="btn" id="nextBtn" onclick="navigateQuiz(1)">Next Question</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    /* ==========================================
+       1. ANIMATED STORY CANVAS PLAYER
+       ========================================== */
+    const canvas = document.getElementById('storyCanvas');
+    const ctx = canvas.getContext('2d');
+    let currentTime = 0;
+    const totalTime = 80; // 80 seconds scale
+    let isPlaying = false;
+    let animInterval = null;
+
+    function drawScene() {
+      // Background Sky & Canyon
+      ctx.fillStyle = currentTime < 20 ? '#1e293b' : (currentTime < 60 ? '#0f172a' : '#1e1b4b');
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Rain effect during middle chapters
+      if (currentTime >= 20 && currentTime < 60) {
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+        ctx.lineWidth = 1.5;
+        for (let i = 0; i < 20; i++) {
+          let x = (Math.sin(i * 99 + currentTime * 2) * 0.5 + 0.5) * canvas.width;
+          let y = ((currentTime * 10 + i * 20) % canvas.height);
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x - 5, y + 15);
+          ctx.stroke();
+        }
+      }
+
+      // Canyon Walls
+      ctx.fillStyle = '#78350f';
+      ctx.beginPath();
+      ctx.moveTo(0, 280);
+      ctx.lineTo(180, 180);
+      ctx.lineTo(220, 280);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(600, 280);
+      ctx.lineTo(380, 150);
+      ctx.lineTo(340, 280);
+      ctx.fill();
+
+      // Rising Flood Water
+      let waterHeight = currentTime < 20 ? 10 : (currentTime < 60 ? 10 + (currentTime - 20) * 1.2 : 55);
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(0, canvas.height - waterHeight, canvas.width, waterHeight);
+
+      // Characters
+      let mayaX = currentTime < 40 ? 120 : 400;
+      let mayaY = currentTime < 40 ? 200 : 130;
+      let ethanX = currentTime < 45 ? 80 : (currentTime < 55 ? 120 + (currentTime - 45) * 28 : 430);
+      let ethanY = currentTime < 45 ? 200 : (currentTime < 55 ? 200 - (currentTime - 45) * 7 : 130);
+
+      // Draw Maya (Blue stick figure)
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(mayaX, mayaY - 20, 8, 0, Math.PI * 2);
+      ctx.moveTo(mayaX, mayaY - 12);
+      ctx.lineTo(mayaX, mayaY + 10);
+      ctx.stroke();
+
+      // Draw Ethan (Teal stick figure)
+      ctx.strokeStyle = '#2dd4bf';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(ethanX, ethanY - 20, 8, 0, Math.PI * 2);
+      ctx.moveTo(ethanX, ethanY - 12);
+      ctx.lineTo(ethanX, ethanY + 10);
+      ctx.stroke();
+
+      // Dialogue Popups based on time
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '12px system-ui';
+      if (currentTime >= 0 && currentTime < 20) {
+        ctx.fillText('Maya: "We must turn back!"', 90, 150);
+        ctx.fillText('Ethan: "Need photos first!"', 40, 170);
+      } else if (currentTime >= 20 && currentTime < 40) {
+        ctx.fillText('Flash flood rising!', 240, 100);
+      } else if (currentTime >= 40 && currentTime < 60) {
+        ctx.fillText('Maya throws rope anchor!', 320, 100);
+        ctx.fillText('Ethan leaps across!', 220, 140);
+      } else {
+        ctx.fillText('Safe on high ledge together', 360, 100);
+      }
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('playBtn').innerText = isPlaying ? 'Pause Scene' : 'Play Scene';
+      if (isPlaying) {
+        animInterval = setInterval(() => {
+          currentTime += 0.5;
+          if (currentTime > totalTime) currentTime = 0;
+          updatePlayerUI();
+        }, 100);
+      } else {
+        clearInterval(animInterval);
+      }
+    }
+
+    function jumpToTime(t) {
+      currentTime = t;
+      updatePlayerUI();
+    }
+
+    function seekVideo(e) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      currentTime = pos * totalTime;
+      updatePlayerUI();
+    }
+
+    function updatePlayerUI() {
+      document.getElementById('progressFill').style.width = `${(currentTime / totalTime) * 100}%`;
+      let mins = Math.floor(currentTime / 60);
+      let secs = Math.floor(currentTime % 60).toString().padStart(2, '0');
+      document.getElementById('timeDisplay').innerText = `${mins}:${secs} / 1:20`;
+      
+      // Highlight matching chapter pill
+      const pills = document.querySelectorAll('.chapter-pill');
+      pills.forEach((pill, idx) => {
+        let times = [0, 20, 40, 60];
+        if (currentTime >= times[idx] && (idx === times.length - 1 || currentTime < times[idx + 1])) {
+          pill.classList.add('active');
+        } else {
+          pill.classList.remove('active');
+        }
+      });
+
+      drawScene();
+    }
+
+    drawScene();
+
+    /* ==========================================
+       2. INTERACTIVE PASSAGE EXPLANATION
+       ========================================== */
+    function explainInteraction(id) {
+      const explanations = {
+        1: "ANALYSIS: Ethan's decision to prioritize his photo contest over Maya's storm warning directly triggers the RISING ACTION. Because he refuses to turn back, both characters become trapped in the canyon when the flash flood hits.",
+        2: "ANALYSIS: Ethan's confession of fear creates the CLIMAX. Plot action reaches maximum tension because Ethan cannot jump alone, forcing Maya to take immediate leadership.",
+        3: "ANALYSIS: The physical interaction (throwing the rope and pulling Ethan to safety) resolves the life-threatening plot conflict and shifts Ethan's attitude from stubborn arrogance to humble gratitude."
+      };
+      alert(explanations[id]);
+    }
+
+    /* ==========================================
+       3. FLORIDA B.E.S.T. QUESTIONS DATA & ENGINE
+       ========================================== */
+    const quizData = [
+      {
+        id: 1,
+        question: "How does Ethan's decision in Paragraph 2 contribute to the development of the story's plot?",
+        options: [
+          "A. It establishes Ethan as an expert survival guide in mountain terrain.",
+          "B. It creates the rising action by causing both characters to be trapped in the canyon when the flash flood begins.",
+          "C. It resolves the conflict between Maya and Ethan by proving the storm warning was false.",
+          "D. It introduces a secondary plot conflict about Maya losing her backpack gear."
+        ],
+        correct: 1,
+        rationale: "Correct! Standard ELA.6.R.1.1 requires analyzing how character choices drive plot events. Ethan's choice to ignore Maya's storm warning delays their exit, directly trapping them in the flash flood and initiating the plot's rising action."
+      },
+      {
+        id: 2,
+        question: "This question has two parts. First, answer Part A. Then, answer Part B.\n\nPart A: Which statement best describes how the interaction between Maya and Ethan changes during the climax of the story?",
+        options: [
+          "A. Ethan takes command and directs Maya to follow his instructions.",
+          "B. Maya relies on Ethan's strength to climb the canyon rock face.",
+          "C. Ethan sets aside his pride and trusts Maya's leadership to leap to safety.",
+          "D. Maya leaves Ethan behind to seek emergency help from forest rangers."
+        ],
+        correct: 2,
+        rationale: "Correct! During the climax (Paragraphs 4–6), Ethan admits his panic and trusts Maya's rescue plan, moving from stubborn independence to reliance on his partner."
+      },
+      {
+        id: 3,
+        question: "Part B: Which quote from the text best supports the answer to Part A?",
+        options: [
+          "A. 'We’re twenty minutes from the summit view, Maya! If I don't get these photos today, I miss the contest deadline.'",
+          "B. 'Trusting Maya's quick decision and firm leadership, Ethan lets go of his heavy camera gear and leaps across...'",
+          "C. 'The sun dipped below the jagged rim of Echo Canyon.'",
+          "D. 'Maya smiled, offering him half her dry jacket.'"
+        ],
+        correct: 1,
+        rationale: "Correct! This direct quote explicitly proves Ethan trusted Maya's leadership and sacrificed his gear to execute her jump plan."
+      },
+      {
+        id: 4,
+        question: "How does Maya's reaction to Ethan's admission of fear in Paragraph 5 advance the resolution of the plot?",
+        options: [
+          "A. By offering immediate problem-solving rather than blame, she secures the rope anchor in time for their escape.",
+          "B. By scolding Ethan, she convinces him that taking photographs was a foolish mistake.",
+          "C. By calling for emergency helicopters, she delays their movement until nightfall.",
+          "D. By climbing to the top alone, she secures help from nearby hikers."
+        ],
+        correct: 0,
+        rationale: "Correct! Maya's calm decision to build a rope anchor rather than argue resolves the immediate physical crisis and enables them to reach safety before water rises."
+      },
+      {
+        id: 5,
+        question: "How does the dialogue between Maya and Ethan in Paragraph 1 establish the main conflict of the story?",
+        options: [
+          "A. It illustrates that both characters are equally terrified of mountain heights.",
+          "B. It establishes an opposing goal between Maya's focus on safety and Ethan's obsession with artistic success.",
+          "C. It proves that Ethan knows the canyon trail better than Maya.",
+          "D. It shows that Maya brought the wrong supplies for a mountain hike."
+        ],
+        correct: 1,
+        rationale: "Correct! The dialogue sets up conflicting character motivations—Maya prioritizes weather safety, while Ethan prioritizes his camera photo deadline."
+      },
+      {
+        id: 6,
+        question: "In Paragraph 7, how does the final interaction between the characters reflect the plot's resolution?",
+        options: [
+          "A. Ethan demands that Maya return into the canyon to retrieve his dropped camera tripod.",
+          "B. Ethan admits his misjudgment, and Maya offers warmth, showing their shared danger forged mutual respect.",
+          "C. Maya promises never to go hiking with Ethan again.",
+          "D. Ethan blames the weather service for making an incorrect forecast."
+        ],
+        correct: 1,
+        rationale: "Correct! The dialogue in Paragraph 7 resolves both the physical plot danger and the emotional tension between the characters."
+      },
+      {
+        id: 7,
+        question: "Which plot stage is directly initiated by Ethan's admission: 'I can't make that jump. My pack is too heavy...'?",
+        options: [
+          "A. Exposition",
+          "B. Inciting Incident",
+          "C. Climax",
+          "D. Falling Action"
+        ],
+        correct: 2,
+        rationale: "Correct! Ethan's inability to jump creates the story's peak moment of crisis and decision-making—the Climax."
+      },
+      {
+        id: 8,
+        question: "How does the physical action of Ethan dropping his camera gear contribute to the story's theme and plot?",
+        options: [
+          "A. It shows he gives up on his passion for photography forever.",
+          "B. It represents his willingness to value personal safety and partnership over material success.",
+          "C. It causes the floodwaters to rise faster down the canyon floor.",
+          "D. It creates an unnecessary distraction during the rescue leap."
+        ],
+        correct: 1,
+        rationale: "Correct! Releasing the heavy gear allows Ethan to complete the jump physically while symbolically demonstrating his realization that safety and trust outweigh photo deadlines."
+      }
+    ];
+
+    let currentQuestionIdx = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+
+    function renderQuestion(idx) {
+      const q = quizData[idx];
+      const container = document.getElementById('quizContainer');
+      
+      let optionsHTML = q.options.map((opt, oIdx) => {
+        let btnClass = 'option-btn';
+        if (userAnswers[idx] !== null) {
+          if (oIdx === q.correct) btnClass += ' correct';
+          else if (oIdx === userAnswers[idx]) btnClass += ' incorrect';
+        }
+        return `<button class="${btnClass}" onclick="selectAnswer(${idx}, ${oIdx})" ${userAnswers[idx] !== null ? 'disabled' : ''}>${opt}</button>`;
+      }).join('');
+
+      let rationaleClass = 'rationale-box';
+      if (userAnswers[idx] !== null) {
+        rationaleClass += ' visible ' + (userAnswers[idx] === q.correct ? 'correct' : 'incorrect');
+      }
+
+      container.innerHTML = `
+        <div class="question-card">
+          <div class="question-text">Q${idx + 1}. ${q.question.replace(/\n/g, '<br>')}</div>
+          <div class="options-grid">${optionsHTML}</div>
+          <div class="${rationaleClass}">${q.rationale}</div>
+        </div>
+      `;
+
+      // Update Navigation State
+      document.getElementById('prevBtn').disabled = idx === 0;
+      document.getElementById('nextBtn').disabled = idx === quizData.length - 1;
+      document.getElementById('quizProgress').innerText = `Question ${idx + 1} of ${quizData.length}`;
+      updateScoreDisplay();
+    }
+
+    function selectAnswer(qIdx, oIdx) {
+      userAnswers[qIdx] = oIdx;
+      renderQuestion(qIdx);
+    }
+
+    function navigateQuiz(dir) {
+      currentQuestionIdx += dir;
+      renderQuestion(currentQuestionIdx);
+    }
+
+    function updateScoreDisplay() {
+      let score = userAnswers.reduce((acc, ans, idx) => {
+        return ans === quizData[idx].correct ? acc + 1 : acc;
+      }, 0);
+      document.getElementById('scoreDisplay').innerText = `Score: ${score} / ${quizData.length}`;
+    }
+
+    // Initial Render
+    renderQuestion(0);
+  </script>
+</body>
+</html>
